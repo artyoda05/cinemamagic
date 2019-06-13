@@ -1,33 +1,33 @@
 <template>
   <div id="app">
-    <h1>Hello App!</h1>
-    <p>
-      <!-- use router-link component for navigation. -->
-      <!-- specify the link by passing the `to` prop. -->
-      <!-- `<router-link>` will be rendered as an `<a>` tag by default -->
-      <router-link to="/foo">Go to Foo</router-link>
-      <router-link to="/bar">Go to Bar</router-link>
-    </p>
-    <!-- route outlet -->
-    <!-- component matched by the route will render here -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <router-link :to="{ name: 'home' }" class="nav-link">Home</router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link :to="{ name: 'movies' }" class="nav-link">Movies</router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link :to=" { name: 'schedule' } " class="nav-link">Schedule</router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link :to=" { name: 'about' } " class="nav-link">About</router-link>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'app'
+    name: 'Layout',
+    data () {
+      return {}
+    }
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

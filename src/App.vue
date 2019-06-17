@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <router-link :to="{ name: 'home' }" class="navbar-brand">
+            <img src="./assets/icon.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
+            Cinemamagic
+        </router-link>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
@@ -20,13 +23,16 @@
         </div>
     </nav>
     <router-view></router-view>
+    <link href="/your-path-to-fontawesome/css/fontawesome.css" rel="stylesheet">
+    <link href="/your-path-to-fontawesome/css/brands.css" rel="stylesheet">
+    <link href="/your-path-to-fontawesome/css/solid.css" rel="stylesheet">
   </div>
 </template>
 
 <script>
 export default {
     name: 'Layout',
-    data () {
+    data: () => {
       return {}
     }
 }

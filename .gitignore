@@ -19,3 +19,5 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+
+/fontawesome-free-5.9.0-web

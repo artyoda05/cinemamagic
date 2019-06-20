@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from './components/Home'
-import Movie from './components/Movie'
-import Movies from './components/Movies'
+import Movie from './components/movies/Movie'
+import Movies from './components/movies/Movies'
 import Schedule from './components/schedule/Schedule'
 import About from './components/About'
 

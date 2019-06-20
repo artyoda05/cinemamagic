@@ -39,43 +39,57 @@ export const store = new Vuex.Store({
         
     },
     getters: {
-        
+        async retrieveSessionsByIMDbId (IMDbId) {
+          const docs = await moviesCollection.where("IMDbId", "==", IMDbId).limit(1).get();
+          const doc = docs.docs[0];
+          return doc.ref.collection('sessions').get()
+            .then(sessions => {return this.filterSessions(sessions)})
+        }
     },
     actions: {
       async retrieveMovies () {
-        const docs = await moviesCollection.get();//.then(docs => {return docs.map(doc => doc.data())});
+        const docs = await moviesCollection.get();
         let data = []; 
         docs.forEach(doc => { 
           data.push({
             IMDbId: doc.data().IMDbId,
             sessions: doc.ref.collection('sessions').get()
-                                                    .then(sessions => {
-                                                      let data = [];
-                                                      sessions.forEach(session => {
-                                                        let localData = {
-                                                          time : session.data().time,
-                                                          reference : session.data().reference
-                                                        };
-                                                        let t = new Date(1970, 0, 1);
-                                                        t.setSeconds(localData.time.seconds + 10800);
-                                                        localData.time = t;
-                                                        const localDataDate = localData.time.toDateString();
-                                                        let placed = false;
-                                                        data.forEach(el => {
-                                                          if (el.date === localDataDate) {
-                                                            el.sessions.push(localData);
-                                                            placed = true;
-                                                          }
-                                                        });
-                                                        if (!placed)
-                                                          data.push({
-                                                            date : localDataDate,
-                                                            sessions: [localData]
-                                                          });
-                                                      });
-                                                      return data;
-                                                  })
+                        .then(sessions => {return this.filterSessions(sessions)})
           })
+        });
+        return data;
+      },
+      async retrieveMoviesId() {
+        const docs = await moviesCollection.get();
+        let data = [];
+        docs.forEach(doc => data.push(doc.data().IMDbId));
+        return data;
+      }
+    },
+    methods: {
+       filterSessions (sessions) {
+        let data = [];
+        sessions.forEach(session => {
+          let localData = {
+            time : session.data().time,
+            reference : session.data().reference
+          };
+          let t = new Date(1970, 0, 1);
+          t.setSeconds(localData.time.seconds + 10800);
+          localData.time = t;
+          const localDataDate = localData.time.toDateString();
+          let placed = false;
+          data.forEach(el => {
+            if (el.date === localDataDate) {
+              el.sessions.push(localData);
+              placed = true;
+            }
+          });
+          if (!placed)
+            data.push({
+              date : localDataDate,
+              sessions: [localData]
+            });
         });
         return data;
       }

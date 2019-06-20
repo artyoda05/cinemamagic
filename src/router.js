@@ -4,7 +4,10 @@ import Home from './components/Home'
 import Movie from './components/movies/Movie'
 import Movies from './components/movies/Movies'
 import Schedule from './components/schedule/Schedule'
+import Session from './components/session/session'
 import About from './components/About'
+import Seat from './components/session/seat'
+import Page404 from './components/404'
 
 Vue.use(VueRouter)
 
@@ -29,9 +32,22 @@ const routes = [
       component: Movie
     },
     {
+      path: '/session/:id',
+      component: Session
+    },
+    {
+      path: '/seat',
+      component: Seat
+    },
+    {
       path: '/about',
       name: 'about',
       component: About
+    },
+    {
+      path: '/*',
+      name: '404',
+      component: Page404
     }
   ]
   

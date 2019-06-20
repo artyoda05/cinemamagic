@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import firebase from 'firebase';
 
 Vue.use(Vuex);
-
+/* eslint-disable no-console */
 // Set the configuration for your app
 const config = {
   apiKey: "AIzaSyDtSbo7fXwn0dM8z7nHgDf9-8BDUw31-kY",
@@ -18,7 +18,6 @@ firebase.initializeApp(config);
 const db = firebase.firestore();
 const moviesCollection = db.collection("movies");
 
-/* eslint-disable no-console */
  /* .get().then(function(docs) {
     
     docs.forEach((doc) => {
@@ -33,6 +32,8 @@ const moviesCollection = db.collection("movies");
     console.log("Error getting document:", error);
 });
 */
+
+
 
 function filterSessions (sessions) {
   let data = [];

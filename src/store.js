@@ -34,17 +34,36 @@ const moviesCollection = db.collection("movies");
 });
 */
 
+function filterSessions (sessions) {
+  let data = [];
+  sessions.forEach(session => {
+    let localData = {
+      time : session.data().time,
+      reference : session.data().reference
+    };
+    let t = new Date(1970, 0, 1);
+    t.setSeconds(localData.time.seconds + 10800);
+    localData.time = t;
+    const localDataDate = localData.time.toDateString();
+    let placed = false;
+    data.forEach(el => {
+      if (el.date === localDataDate) {
+        el.sessions.push(localData);
+        placed = true;
+      }
+    });
+    if (!placed)
+      data.push({
+        date : localDataDate,
+        sessions: [localData]
+      });
+  });
+  return data;
+}
+
 export const store = new Vuex.Store({
     state: {
         
-    },
-    getters: {
-        async retrieveSessionsByIMDbId (IMDbId) {
-          const docs = await moviesCollection.where("IMDbId", "==", IMDbId).limit(1).get();
-          const doc = docs.docs[0];
-          return doc.ref.collection('sessions').get()
-            .then(sessions => {return this.filterSessions(sessions)})
-        }
     },
     actions: {
       async retrieveMovies () {
@@ -54,7 +73,7 @@ export const store = new Vuex.Store({
           data.push({
             IMDbId: doc.data().IMDbId,
             sessions: doc.ref.collection('sessions').get()
-                        .then(sessions => {return this.filterSessions(sessions)})
+                        .then(sessions => {return filterSessions(sessions)})
           })
         });
         return data;
@@ -64,34 +83,12 @@ export const store = new Vuex.Store({
         let data = [];
         docs.forEach(doc => data.push(doc.data().IMDbId));
         return data;
+      },
+      async retrieveSessionsByIMDbId (state, IMDbId) {
+        const docs = await moviesCollection.where("IMDbId", "==", IMDbId).limit(1).get();
+        const doc = docs.docs[0];
+        return doc.ref.collection('sessions').get()
+          .then(sessions => { return filterSessions(sessions) })
       }
-    },
-    methods: {
-       filterSessions (sessions) {
-        let data = [];
-        sessions.forEach(session => {
-          let localData = {
-            time : session.data().time,
-            reference : session.data().reference
-          };
-          let t = new Date(1970, 0, 1);
-          t.setSeconds(localData.time.seconds + 10800);
-          localData.time = t;
-          const localDataDate = localData.time.toDateString();
-          let placed = false;
-          data.forEach(el => {
-            if (el.date === localDataDate) {
-              el.sessions.push(localData);
-              placed = true;
-            }
-          });
-          if (!placed)
-            data.push({
-              date : localDataDate,
-              sessions: [localData]
-            });
-        });
-        return data;
-      }
-    }
+    }  
 });

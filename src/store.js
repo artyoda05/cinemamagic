@@ -17,6 +17,7 @@ const config = {
 firebase.initializeApp(config);
 const db = firebase.firestore();
 const moviesCollection = db.collection("movies");
+const sessionCollection = db.collection('sessions');
 
  /* .get().then(function(docs) {
     
@@ -33,7 +34,11 @@ const moviesCollection = db.collection("movies");
 });
 */
 
-
+function timestampToDate(timestamp) {
+    let t = new Date(1970, 0, 1);
+    t.setSeconds(timestamp + 10800);
+    return t;
+}
 
 function filterSessions (sessions) {
   let data = [];
@@ -42,9 +47,7 @@ function filterSessions (sessions) {
       time : session.data().time,
       reference : session.data().reference
     };
-    let t = new Date(1970, 0, 1);
-    t.setSeconds(localData.time.seconds + 10800);
-    localData.time = t;
+    localData.time = timestampToDate(localData.time.seconds);
     const localDataDate = localData.time.toDateString();
     let placed = false;
     data.forEach(el => {
@@ -64,7 +67,18 @@ function filterSessions (sessions) {
 
 export const store = new Vuex.Store({
     state: {
-        
+        chosenSeats: []
+    },
+    mutations: {
+      addSeat(state, seat) {
+        state.chosenSeats.push(seat);
+      },
+      removeSeat(state, seat) {
+        state.chosenSeats = state.chosenSeats.filter(x => x.seat != seat.seat || x.row != seat.row);
+      },
+      clearSeats(state) {
+        state.chosenSeats = [];
+      }
     },
     actions: {
       async retrieveMovies () {
@@ -90,6 +104,22 @@ export const store = new Vuex.Store({
         const doc = docs.docs[0];
         return doc.ref.collection('sessions').get()
           .then(sessions => { return filterSessions(sessions) })
+      },
+      async retrieveSession(state, sessionId) {
+        const session = sessionCollection.doc(sessionId);
+        let data = await session.get();
+        data = data.data();
+        const rows = await session.collection('seats').get();
+        let seats = [];
+        rows.forEach(row => seats.push({
+          data: row.data().row,
+          row: Number(row.id)
+        }));
+        return {
+          time: timestampToDate(data.time.seconds),
+          IMDbId: data.IMDbId,
+          seats: seats.sort((a, b) => a.row > b.row).map(x => x.data)
+        }
       }
     }  
 });

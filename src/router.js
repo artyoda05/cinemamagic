@@ -6,7 +6,6 @@ import Movies from './components/movies/Movies'
 import Schedule from './components/schedule/Schedule'
 import Session from './components/session/session'
 import About from './components/About'
-import Seat from './components/session/seat'
 import Page404 from './components/404'
 
 Vue.use(VueRouter)
@@ -34,10 +33,6 @@ const routes = [
     {
       path: '/session/:id',
       component: Session
-    },
-    {
-      path: '/seat',
-      component: Seat
     },
     {
       path: '/about',

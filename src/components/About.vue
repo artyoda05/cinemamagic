@@ -62,6 +62,6 @@ export default {
   }
   
   .flex-column .flex-row {
-    height: 6vh;
+    height: 50px;
   }
 </style>

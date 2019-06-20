@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import Home from './components/Home'
 import Movie from './components/Movie'
 import Movies from './components/Movies'
-import Schedule from './components/Schedule'
+import Schedule from './components/schedule/Schedule'
 import About from './components/About'
 
 Vue.use(VueRouter)

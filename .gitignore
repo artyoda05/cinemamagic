@@ -20,4 +20,4 @@ yarn-error.log*
 *.sln
 *.sw?
 
-/fontawesome-free-5.9.0-web
+/public/fontawesome-free-5.9.0-web

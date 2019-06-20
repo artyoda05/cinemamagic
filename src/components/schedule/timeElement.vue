@@ -1,33 +1,27 @@
 <template>
-    <router-link class="btn btn-outline-primary" :to="`/session/${sessionRef}`" role="button">{{ time }}</router-link>
+    <router-link class="btn btn-outline-primary session-link btn-lg" :to="`/session/${sessionRef}`" role="button">{{ time }}</router-link>
 </template>
 
 <script>
 export default {
     name: 'time-element',
     props:{
-        time: {
-            type: Date,
+        session : {
+            type: Object,
             required: true
-        },
-        sessionRef: {
-            type: string,
-            required: false
         }
     },
     data () {
       return {
-        time: this.time.toLocaleTimeString(),
-        sessionRef: this.sessionRef      
+        time : `${this.session.time.getHours()}:${this.session.time.getMinutes() != 0 ? this.session.time.getMinutes() : '00'}`,
+        sessionRef : this.session.reference      
       }
     }
 }
 </script>
 
 <style>
-  .schedule-image {
-    width: 90%;
-    height: auto;
-
+  .session-link {
+    margin-right: 5px;
   }
 </style>

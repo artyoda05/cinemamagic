@@ -21,6 +21,21 @@ firebase.initializeApp(config);
 const db = firebase.firestore();
 const moviesCollection = db.collection("movies");
 const sessionCollection = db.collection('sessions');
+// eslint-disable-next-line
+const sendMessage = firebase.functions().httpsCallable('sendMail');
+sendMessage({
+  dest: 'artyoda05@gmail.com',
+  time: 'time',
+  title: 'title',
+  tickets: [
+    {
+      row: 12,
+      seat: 15
+    }
+  ]
+}).then(function(result) {
+  console.log(result);
+});
 
  /* .get().then(function(docs) {
     
@@ -122,6 +137,7 @@ export const store = new Vuex.Store({
           IMDbId: data.IMDbId,
           seats: seats.sort((a, b) => a.row > b.row).map(x => x.data)
         }
-      }
+      },
+      
     }  
 });

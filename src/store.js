@@ -2,8 +2,11 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from 'firebase';
 
-Vue.use(Vuex);
 /* eslint-disable no-console */
+
+
+Vue.use(Vuex);
+
 // Set the configuration for your app
 const config = {
   apiKey: "AIzaSyDtSbo7fXwn0dM8z7nHgDf9-8BDUw31-kY",
@@ -33,7 +36,6 @@ const sessionCollection = db.collection('sessions');
     console.log("Error getting document:", error);
 });
 */
-
 function timestampToDate(timestamp) {
     let t = new Date(1970, 0, 1);
     t.setSeconds(timestamp + 10800);

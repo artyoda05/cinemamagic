@@ -7,6 +7,10 @@
             <div class="col">
                 <h3>{{ title }}</h3>
                 <h5>{{ time }}</h5>
+                <button type="button" class="btn btn-primary mt-3" v-on:click="buyTickets" >Buy tickets</button>
+                <div v-if="clicked && this.$store.state.chosenSeats.length == 0" class="alert alert-warning mt-2" role="alert">
+                    Choose seats first!
+                </div>
             </div>
         </div>
     </div>
@@ -26,7 +30,8 @@ export default {
             seats: false,
             title: false,
             time: false,
-            loaded: false
+            loaded: false,
+            clicked: false
         }
     },
     created () {
@@ -41,12 +46,17 @@ export default {
                 this.title = res.data.Title;
                 this.loaded = true;
             });
+    },
+    methods: {
+        buyTickets() {
+            this.clicked = true;
+        }
     }
 }
 </script>
 
 <style>
-    .session-container{
-        margin-top: 20px;
+    .session-container, button {
+        margin-top: 50px;
     }
 </style>

@@ -23,7 +23,7 @@ const moviesCollection = db.collection("movies");
 const sessionCollection = db.collection('sessions');
 // eslint-disable-next-line
 const sendMessage = firebase.functions().httpsCallable('sendMail');
-sendMessage({
+/*sendMessage({
   dest: 'artyoda05@gmail.com',
   time: 'time',
   title: 'title',
@@ -92,9 +92,6 @@ export const store = new Vuex.Store({
       },
       removeSeat(state, seat) {
         state.chosenSeats = state.chosenSeats.filter(x => x.seat != seat.seat || x.row != seat.row);
-      },
-      clearSeats(state) {
-        state.chosenSeats = [];
       }
     },
     actions: {
@@ -138,6 +135,28 @@ export const store = new Vuex.Store({
           seats: seats.sort((a, b) => a.row > b.row).map(x => x.data)
         }
       },
-      
+      async reserveSeats(state, data) {
+        let rows = {};
+        const seatsRel = sessionCollection.doc(data.sessionId).collection('seats');
+        let seats = await seatsRel.get();
+        seats.forEach(row => rows[row.id] = row.data().row);
+        for (let row in rows){
+          data.seats.forEach(seat => {
+            if (seat.row === Number(row))
+              rows[row][seat.seat - 1] = false;
+          });
+          seatsRel.doc(row).update({
+            row: rows[row]
+          });
+        }
+        this.state.chosenSeats = [];
+        sendMessage({
+          tickets: data.seats,
+          dest: data.dest,
+          title: data.title,
+          time: data.time
+        });
+        return true;
+      }
     }  
 });

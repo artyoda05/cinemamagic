@@ -8,9 +8,10 @@
                 <h3>{{ title }}</h3>
                 <h5>{{ time }}</h5>
                 <button type="button" class="btn btn-primary mt-3" v-on:click="buyTickets" >Buy tickets</button>
-                <div v-if="clicked && this.$store.state.chosenSeats.length == 0" class="alert alert-warning mt-2" role="alert">
+                <div v-if="this.$store.state.chosenSeats.length == 0" class="alert alert-warning mt-2" role="alert">
                     Choose seats first!
                 </div>
+                <reservation-modal v-if="(clicked && this.$store.state.chosenSeats.length != 0) || reserved" @reserved="reserved = true" @close="clicked = false" :title="title" :time="time" />
             </div>
         </div>
     </div>
@@ -18,12 +19,14 @@
 
 <script>
 import seatsTable from './seatsTable'
+import reservation from './reservation'
 import axios from 'axios'
 
 export default {
     name: 'session',
     components: {
-        seatsTable
+        'seats-table': seatsTable,
+        'reservation-modal': reservation
     },
     data () {
         return {
@@ -31,7 +34,8 @@ export default {
             title: false,
             time: false,
             loaded: false,
-            clicked: false
+            clicked: false,
+            reserved: false
         }
     },
     created () {
@@ -49,7 +53,7 @@ export default {
     },
     methods: {
         buyTickets() {
-            this.clicked = true;
+            this.clicked = this.$store.state.chosenSeats.length !== 0;
         }
     }
 }

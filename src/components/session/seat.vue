@@ -1,5 +1,5 @@
 <template>
-    <div v-if="available" v-on:click="onClick"  class="seat available-seat" :class="{ 'chosen-sit': chosen }" >{{ seat }}</div>
+    <div v-if="available" v-on:click="onClick" class="seat available-seat" :class="{ 'chosen-sit': chosen }" >{{ seat }}</div>
     <div v-else class="seat unavailable-seat"> {{ seat }} </div>
 </template>
 
@@ -71,5 +71,9 @@ export default {
     .available-seat:hover, .chosen-sit {
         color:white;
         background-color: #007bff;
+    }
+
+    .available-seat:hover {
+        cursor: pointer;
     }
 </style>

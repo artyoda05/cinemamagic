@@ -6,7 +6,7 @@
           <img class="schedule-image" :src="src">
         </div>
         <div class="col">
-          <h4>{{ name }}</h4>
+          <router-link :to="`movie/${movie.IMDbId}`"><h4>{{ name }}</h4></router-link>
           <date-element v-for="date in dates" v-bind:key="date.date.toString()" :date="`${date.date}`" :sessions="date.sessions"></date-element>    
         </div>
       </div>

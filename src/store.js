@@ -23,34 +23,7 @@ const moviesCollection = db.collection("movies");
 const sessionCollection = db.collection('sessions');
 // eslint-disable-next-line
 const sendMessage = firebase.functions().httpsCallable('sendMail');
-/*sendMessage({
-  dest: 'artyoda05@gmail.com',
-  time: 'time',
-  title: 'title',
-  tickets: [
-    {
-      row: 12,
-      seat: 15
-    }
-  ]
-}).then(function(result) {
-  console.log(result);
-});
 
- /* .get().then(function(docs) {
-    
-    docs.forEach((doc) => {
-      doc.ref.collection('sessions').get().then(x => {
-        x.forEach(y => {
-          console.log(y.data());
-        })
-      });
-  });
-
-}).catch(function(error) {
-    console.log("Error getting document:", error);
-});
-*/
 function timestampToDate(timestamp) {
     let t = new Date(1970, 0, 1);
     t.setSeconds(timestamp + 10800);

@@ -76,8 +76,25 @@ namespace Cinemamagic.Controllers
         // POST: api/Bookings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+        public async Task<ActionResult<Booking>> PostBooking(AddBooking addBooking)
         {
+            var session = await _context.Session.FindAsync(addBooking.SessionId);
+            var user = await _context.User.FindAsync(addBooking.UserId);
+
+            if (session == null || user == null)
+            {
+                return BadRequest();
+            }
+
+            var booking = new Booking
+            {
+                Session = session,
+                User = user,
+                Time = DateTime.Now,
+                IsCancelled = false,
+                Tickets = addBooking.Tickets
+            };
+
             _context.Booking.Add(booking);
             await _context.SaveChangesAsync();
 

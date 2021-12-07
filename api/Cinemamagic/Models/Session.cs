@@ -9,4 +9,13 @@ public record Session
     public DateTime DateTime { get; set; }
 
     public Hall Hall { get; set; }
+}
+
+public record AddSession
+{
+    public string MovieId { get; set; }
+
+    public DateTime DateTime { get; set; }
+
+    public int HallId { get; set; }
 };

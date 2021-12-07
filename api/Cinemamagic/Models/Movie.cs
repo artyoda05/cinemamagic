@@ -10,7 +10,7 @@ public record Movie
 
     public string Rated { get; set; }
 
-    public int Runtime { get; set; }
+    public string Runtime { get; set; }
 
     public string Genre { get; set; }
 

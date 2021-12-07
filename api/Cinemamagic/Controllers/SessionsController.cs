@@ -76,8 +76,23 @@ namespace Cinemamagic.Controllers
         // POST: api/Sessions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Session>> PostSession(Session session)
+        public async Task<ActionResult<Session>> PostSession(AddSession addSession)
         {
+            var hall = await _context.Hall.FindAsync(addSession.HallId);
+            var movie = await _context.Movie.FindAsync(addSession.MovieId);
+
+            if (hall == null || movie == null)
+            {
+                return BadRequest();
+            }
+
+            var session = new Session
+            {
+                DateTime = addSession.DateTime,
+                Hall = hall,
+                Movie = movie,
+            };
+
             _context.Session.Add(session);
             await _context.SaveChangesAsync();
 

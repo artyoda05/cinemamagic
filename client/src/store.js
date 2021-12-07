@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import firebase from 'firebase';
+import axious from 'axios';
 
 /* eslint-disable no-console */
 
@@ -69,6 +70,10 @@ export const store = new Vuex.Store({
     },
     actions: {
       async retrieveMovies () {
+        const smth = await axious.get("https://localhost:7112/api/Movies");
+
+        console.log(smth);
+
         const docs = await moviesCollection.get();
         let data = []; 
         docs.forEach(doc => { 

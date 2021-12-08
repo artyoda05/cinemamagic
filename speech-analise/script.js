@@ -1,6 +1,7 @@
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
 var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
 var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
+var synth = window.speechSynthesis;
 
 var phrases = [
   'hello',
@@ -65,18 +66,23 @@ function testSpeech() {
       switch (speechResult) {
           case 'hello':
               resultPara.textContent = 'hello';
+              speak('hello');
               break;
           case 'who are you':
               resultPara.textContent = 'i am you but better';
+              speak('i am you but better');
               break;
           case 'i\'m scared':
               resultPara.textContent = 'of course you are';
+              speak('of course you are');
               break;
           case 'just like a film':
-              resultPara.textContent = 'it`s not';
+              resultPara.textContent = 'it\'s not';
+              speak('it`s not');
               break;
           case 'open film called':
               resultPara.textContent = 'why are you ordering me';
+              speak('why are you ordering me');
               break;
           default:
               console.log(`Sorry, we are out of ${expr}.`);
@@ -138,3 +144,27 @@ function testSpeech() {
 }
 
 testBtn.addEventListener('click', testSpeech);
+
+function speak(text) {
+    if (synth.speaking) {
+        console.error('speechSynthesis.speaking');
+        return;
+    }
+    var utterThis = new SpeechSynthesisUtterance(text);
+    utterThis.onend = function (event) {
+        console.log('SpeechSynthesisUtterance.onend');
+    }
+    utterThis.onerror = function (event) {
+        console.error('SpeechSynthesisUtterance.onerror');
+    }
+    voices = synth.getVoices().sort(function (a, b) {
+        const aname = a.name.toUpperCase(), bname = b.name.toUpperCase();
+        if (aname < bname) return -1;
+        else if (aname == bname) return 0;
+        else return +1;
+    });
+    utterThis.voice = voices[10];
+    utterThis.pitch = 1;
+    utterThis.rate = 1;
+    synth.speak(utterThis);
+}

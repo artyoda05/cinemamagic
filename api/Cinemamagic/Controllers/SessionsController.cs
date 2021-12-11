@@ -29,15 +29,38 @@ namespace Cinemamagic.Controllers
         }
 
         // GET: api/Sessions/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Session>> GetSession(Guid id)
+        [HttpGet("movie/{id}")]
+        public async Task<ActionResult<IEnumerable<Session>>> GetSession(string id)
         {
-            var session = await _context.Session.FindAsync(id);
+            var session = await _context.Session
+                .Include(s => s.Movie)
+                .Where(s => string.Equals(s.Movie.Id, id))
+                .ToListAsync();
 
             if (session == null)
             {
                 return NotFound();
             }
+
+            return session;
+        }
+
+        // GET: api/Sessions/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Session>> GetSession(Guid id)
+        {
+            var session = await _context.Session
+                .Include(x => x.Movie)
+                .Include(x => x.Hall)
+                .ThenInclude(h => h.Rows)
+                .FirstOrDefaultAsync(x => id.Equals(x.Id));
+
+            if (session == null)
+            {
+                return NotFound();
+            }
+
+            session.Hall.Rows = session.Hall.Rows.OrderBy(x => x.RowNumber);
 
             return session;
         }

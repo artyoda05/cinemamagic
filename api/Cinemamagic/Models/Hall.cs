@@ -12,5 +12,6 @@ public record Hall
 public record Row
 {
     public Guid Id { get; set; }
+    public int RowNumber { get; set; }
     public int NumberOfSeats { get; set; } 
 }

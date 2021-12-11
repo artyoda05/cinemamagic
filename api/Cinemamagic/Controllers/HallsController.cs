@@ -27,19 +27,13 @@ namespace Cinemamagic.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Hall>> GetHall(int id)
         {
-            var hall = await _context.Hall.FindAsync(id);
+            var hall = await _context.Hall.Include(h => h.Rows).FirstOrDefaultAsync(h => id == h.Id);
 
             if (hall == null)
             {
                 return NotFound();
             }
-
-            var imdb = new IMDbApiLib.ApiLib("k_sv6fiem3");
-
-            var titles = await imdb.TitleAsync("tt2382320", Posters: true);
-
-            var link = titles.Posters.Posters[0].Link;
-
+            
             return hall;
         }
 

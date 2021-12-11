@@ -58,7 +58,7 @@ export default {
   }
 
   .block{
-    display: block;
+    display: block !important;
     margin: auto;
     margin-top: 40px;
     width: 20vw;

@@ -7,6 +7,7 @@ import Schedule from './components/schedule/Schedule'
 import Session from './components/session/session'
 import About from './components/About'
 import Page404 from './components/404'
+import Booking from './components/bookings/Booking'
 
 Vue.use(VueRouter)
 
@@ -38,6 +39,11 @@ const routes = [
       path: '/about',
       name: 'about',
       component: About
+    },
+    {
+      path: '/bookings',
+      name: 'booking',
+      component: Booking
     },
     {
       path: '/*',

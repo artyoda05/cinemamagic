@@ -5,27 +5,41 @@
             <div v-if="!completed" class="modal-content">
                 <form @submit="reserveSeats">
                 <div class="modal-header">
-                    <h5 class="modal-title">You chose those seats. To reserve them input your email.</h5>
+                    <h5 class="modal-title">Register</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="$emit('close')">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p class="lead">{{title}}<br>
-                    {{time}}</p>
-                    <ul>
-                        <li v-for="seat in seats" v-bind:key="`${seat.seat} ${seat.row}`">{{ seat.seat }} seat in {{ seat.row }} row</li>
-                    </ul>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Login</label>
+                        <input type="login" v-model="login" class="form-control" aria-describedby="emailHelp" placeholder="Enter login" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Password</label>
+                        <input type="password" v-model="password" class="form-control" aria-describedby="emailHelp" placeholder="Enter password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email</label>
+                        <input type="email" v-model="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Name</label>
+                        <input type="string" v-model="name" class="form-control" placeholder="Enter name" required>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="$emit('close')">Close</button>
-                    <button type="submit" class="btn btn-primary">Confirm reservation</button>
+                    <button type="submit" class="btn btn-primary">Register</button>
                 </div>
                 </form>
             </div>
             <div v-else class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Meet you in cinemamagic</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="$emit('close')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-footer">
                     <router-link :to="{ name: 'movies' }" class="btn btn-link">To movies -></router-link>
@@ -38,7 +52,7 @@
 
 <script>
 export default {
-    name: 'reservation-modal',
+    name: 'register-modal',
     props: {
         title: {
             type: String,
@@ -50,19 +64,30 @@ export default {
         }
     },
     data () {
-        return{
-            seats: this.$store.state.chosenSeats,
+        return {
+            login: '',
+            password: '',
+            name: '',
             email: '',
             completed: false
         }
     },
     methods: {
         reserveSeats(e) {
-            this.$emit('reserved');
-            this.$store.dispatch('reserveSeats', {
-                sessionId: this.$route.params.id,
-                tickets: this.seats.map(s => { return { row: s.row, seat: s.seat };})
-            }).then( () => this.completed = true);
+            
+            this.$store.dispatch('register', {
+                login: this.login,
+                password: this.password,
+                email: this.email,
+                name: this.name
+            }).then( (x) => {
+                this.completed = x;
+                if (x){
+                    this.$emit('registered');
+                    this.$emit('close');
+                }
+
+            });
             e.preventDefault();
         }
     }/*,

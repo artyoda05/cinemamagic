@@ -50,6 +50,8 @@ export default {
                 this.title = res.data.title;
                 this.loaded = true;
             });
+
+        this.$store.commit('setSessionId', this.$route.params.id);
     },
     methods: {
         buyTickets() {

@@ -15,7 +15,7 @@
           </div>
         </div>
         <div class="carousel-item">
-          <img src="../assets/second-image.jpg" class="d-block w-100">
+          <img src="https://imdb-api.com/posters/original/xLNtaLaHudIzOqdEZ7R3lcDLrQQ.jpg" class="d-block w-100">
           <div class="carousel-caption d-none d-md-block">
             <h5>Second slide label</h5>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>

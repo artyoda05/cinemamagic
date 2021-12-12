@@ -2,8 +2,8 @@
   <div class="container booking-container">
       <h3>Bookings</h3>
     <div v-if="loaded">
-      <div v-for="booking in bookings" v-bind:key="booking.id" class="row">
-          <div class="col-4"><h4>{{ booking.session.movie.title }}</h4></div>
+      <div v-for="(booking, index) in bookings" v-bind:key="booking.id" class="row">
+          <div class="col-4"><h4>{{ index + 1 }}. {{ booking.session.movie.title }}</h4></div>
           <div class="col">
               <h5>{{booking.session.dateTime}} in {{booking.session.hall.name}}</h5>
               <p v-for="ticket in booking.tickets" v-bind:key="ticket">
@@ -34,6 +34,12 @@ export default {
             .then(data => { 
                 this.bookings = data;
                 this.loaded = true;
+                this.$store.commit('setBookings', this.bookings.map((booking, index) => {
+                    return {
+                        id: booking.id,
+                        index: index + 1
+                    };
+                })); 
             });
     },
     methods: {

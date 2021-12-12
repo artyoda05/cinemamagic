@@ -74,7 +74,9 @@ function createSeats(numberOfSeats, row, occupiedSeats) {
 export const store = new Vuex.Store({
     state: {
         chosenSeats: [],
-        id: ''
+        id: '',
+        bookings: [],
+        sessionId: ''
     },
     mutations: {
       addSeat(state, seat) {
@@ -82,6 +84,14 @@ export const store = new Vuex.Store({
       },
       removeSeat(state, seat) {
         state.chosenSeats = state.chosenSeats.filter(x => x.seat != seat.seat || x.row != seat.row);
+      },
+      setBookings(state, bookings) {
+        console.log(bookings);
+        state.bookings = bookings;
+      },
+      setSessionId(state, sessionId) {
+        console.log(sessionId);
+        state.sessionId = sessionId;
       }
     },
     actions: {
@@ -156,6 +166,8 @@ export const store = new Vuex.Store({
         console.log(data);
 
         await axious.post(`https://localhost:7112/api/Bookings`, data);
+
+        this.state.chosenSeats = [];
 
         return true;
       },

@@ -28,6 +28,26 @@ namespace Cinemamagic.Controllers
             return await _context.Booking.ToListAsync();
         }
 
+        // GET: api/Bookings
+        [HttpGet("user/{id}")]
+        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingUser(Guid id)
+        {
+            return await _context.Booking.Where(b => id.Equals(b.User.Id) && !b.IsCancelled)
+                .Include(b => b.Tickets)
+                .Include(b => b.Session)
+                .ThenInclude(b => b.Movie)
+                .Include(b => b.Session)
+                .ThenInclude(b => b.Hall)
+                .ToListAsync();
+        }
+
+        // GET: api/Bookings
+        [HttpGet("session/{id}")]
+        public async Task<ActionResult<IEnumerable<Booking>>> GetBookingSession(Guid id)
+        {
+            return await _context.Booking.Where(b => id.Equals(b.Session.Id) && !b.IsCancelled).Include(b => b.Tickets).ToListAsync();
+        }
+
         // GET: api/Bookings/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Booking>> GetBooking(Guid id)
@@ -76,8 +96,25 @@ namespace Cinemamagic.Controllers
         // POST: api/Bookings
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+        public async Task<ActionResult<Booking>> PostBooking(AddBooking addBooking)
         {
+            var session = await _context.Session.FindAsync(addBooking.SessionId);
+            var user = await _context.User.FindAsync(addBooking.UserId);
+
+            if (session == null || user == null)
+            {
+                return BadRequest();
+            }
+
+            var booking = new Booking
+            {
+                Session = session,
+                User = user,
+                Time = DateTime.Now,
+                IsCancelled = false,
+                Tickets = addBooking.Tickets
+            };
+
             _context.Booking.Add(booking);
             await _context.SaveChangesAsync();
 
@@ -94,7 +131,9 @@ namespace Cinemamagic.Controllers
                 return NotFound();
             }
 
-            _context.Booking.Remove(booking);
+            booking.IsCancelled = true;
+
+            _context.Booking.Update(booking);
             await _context.SaveChangesAsync();
 
             return NoContent();

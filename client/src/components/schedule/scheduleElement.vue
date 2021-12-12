@@ -38,14 +38,22 @@ export default {
       }
     },
     created () {
-      axios.request(`http://www.omdbapi.com/?i=${this.movie.IMDbId}&apikey=38389047`)
+      // eslint-disable-next-line no-console
+      console.log(this.movie);
+
+      axios.request(`https://localhost:7112/api/Movies/${this.movie.IMDbId}`)
            .then(req => this.fillData(req.data));
     },  
     methods: {
       async fillData(data) {
-        this.dates = await this.movie.sessions;
-        this.name = data.Title;
-        this.src = data.Poster;
+        // eslint-disable-next-line no-console
+        console.log(data);
+        // eslint-disable-next-line no-console
+        console.log(this.movie);
+
+        this.dates = await this.$store.dispatch('retrieveSessionsByIMDbId', this.movie.IMDbId );
+        this.name = data.title;
+        this.src = data.poster;
         this.loaded = true;
       }
     }

@@ -21,6 +21,43 @@ namespace Cinemamagic.Controllers
             _context = context;
         }
 
+        // POST: api/Users
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("login")]
+        public async Task<ActionResult<Guid>> Login(LoginModel login)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(u =>
+                string.Equals(u.Login, login.Login) && string.Equals(u.Password, login.Password));
+
+            if (user == null)
+            {
+                return NoContent();
+            }
+
+            return user.Id;
+        }
+
+        // POST: api/Users
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("register")]
+        public async Task<ActionResult<User>> Register(Register register)
+        {
+            var user = new User
+            {
+                DateOfBirth = register.DateOfBirth,
+                Email = register.Email,
+                IsActivated = true,
+                Login = register.Login,
+                Name = register.Name,
+                Password = register.Password
+            };
+
+            _context.User.Add(user);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+        }
+
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUser()

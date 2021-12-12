@@ -76,8 +76,35 @@ namespace Cinemamagic.Controllers
         // POST: api/Movies
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+        public async Task<ActionResult<Movie>> PostMovie(string id)
         {
+            var imdb = new IMDbApiLib.ApiLib("k_sv6fiem3");
+
+            var title = await imdb.TitleAsync(id, Posters: true);
+
+            if (title == null || string.IsNullOrEmpty(title.Title))
+            {
+                return NotFound();
+            }
+
+            var link = title.Posters?.Posters?.FirstOrDefault()?.Link;
+
+            DateTime.TryParse(title.ReleaseDate, out var date);
+
+            var movie = new Movie
+            {
+                Id = id,
+                Title = title.Title,
+                Actors = title.Stars,
+                Director = title.Directors,
+                Genre = title.Genres,
+                Plot = title.Plot,
+                Poster = link,
+                Rated = title.ContentRating,
+                ReleaseDate = date,
+                Runtime = title.RuntimeStr
+            };
+
             _context.Movie.Add(movie);
             try
             {

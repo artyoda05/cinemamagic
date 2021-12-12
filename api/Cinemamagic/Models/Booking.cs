@@ -23,3 +23,12 @@ public record Ticket
 
     public int Seat { get; set; }
 }
+
+public record AddBooking
+{
+    public Guid UserId { get; set; }
+
+    public Guid SessionId { get; set; }
+
+    public IEnumerable<Ticket> Tickets { get; set; }
+}

@@ -2,17 +2,17 @@
     <div class="container movie-container">
     <div v-if="filmData && sessions">
       <div class="row">
-        <div class="col-4"><img class="movie-poster" :src="filmData.Poster"></div>
+        <div class="col-4"><img class="movie-poster" :src="filmData.poster"></div>
         <div class="col">
-          <h2>{{ filmData.Title }}</h2>
-          <p><b>Release date:</b> {{filmData.Released}}</p>
-          <p><b>Rated:</b> {{filmData.Rated}}</p>
-          <p><b>Runtime:</b> {{filmData.Runtime}}</p>
-          <p><b>Genre:</b> {{filmData.Genre}}</p>
-          <p><b>Director:</b> {{filmData.Director}}</p>
-          <p><b>Actors:</b> {{filmData.Actors}}</p>
+          <h2>{{ filmData.title }}</h2>
+          <p><b>Release date:</b> {{filmData.released}}</p>
+          <p><b>Rated:</b> {{filmData.rated}}</p>
+          <p><b>Runtime:</b> {{filmData.runtime}}</p>
+          <p><b>Genre:</b> {{filmData.genre}}</p>
+          <p><b>Director:</b> {{filmData.director}}</p>
+          <p><b>Actors:</b> {{filmData.actors}}</p>
           <p><b>Plot:</b></p>
-          <p>{{filmData.Plot}}</p>
+          <p>{{filmData.plot}}</p>
         </div>
       </div>
       <date-element v-for="session in sessions" v-bind:key="session.date.toString()" :date="`${session.date}`" :sessions="session.sessions"></date-element>
@@ -39,10 +39,10 @@ export default {
       }
     },
     created () {
-      axios.request(`http://www.omdbapi.com/?i=${this.$route.params.id}&apikey=38389047&plot=full`)
+      axios.request(`https://localhost:7112/api/Movies/${this.$route.params.id}`)
           .then(res => this.filmData = res.data);
       this.$store.dispatch('retrieveSessionsByIMDbId', this.$route.params.id )
-          .then(sessions => this.sessions = sessions)
+          .then(sessions => this.sessions = sessions);
     }
 }
 </script>

@@ -3,11 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Cinemamagic.Data;
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Services.AddDbContext<CinemamagicContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("CinemamagicContext")));
-
 builder.Services.AddDbContext<CinemamagicContext>(options =>
-    options.UseInMemoryDatabase("CinemamagicContext"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CinemamagicContext"), builder =>
+    {
+        builder.EnableRetryOnFailure();
+    }));
+
+//builder.Services.AddDbContext<CinemamagicContext>(options =>
+//    options.UseInMemoryDatabase("CinemamagicContext"));
 
 // Add services to the container.
 
@@ -16,7 +19,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+        builder => builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 var app = builder.Build();
+
+app.UseCors("CorsPolicy");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -44,10 +44,10 @@ export default {
                 this.seats = data.seats;
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' , hour: 'numeric', minute: 'numeric'};
                 this.time = new Intl.DateTimeFormat('en-GB', options).format(data.time);
-                return axios.request(`http://www.omdbapi.com/?i=${data.IMDbId}&apikey=38389047`);
+                return axios.request(`https://localhost:7112/api/Movies/${data.IMDbId}`);
             })
             .then(res => {
-                this.title = res.data.Title;
+                this.title = res.data.title;
                 this.loaded = true;
             });
     },

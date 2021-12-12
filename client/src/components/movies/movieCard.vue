@@ -1,6 +1,6 @@
 <template>
     <router-link :to="`/movie/${IMDbId}`">
-        <div v-if="loaded" class="card">
+        <div v-if="loaded" class="card" style="width: 15vw;">
             <img :src="src" class="card-img-top">
             <div class="card-body">
                 <h5 class="card-title">{{ title }}</h5>
@@ -29,10 +29,13 @@ export default {
       }  
     },
     created() {
-        axios.request(`http://www.omdbapi.com/?i=${this.IMDbId}&apikey=38389047`)
+        // eslint-disable-next-line no-console
+        console.log(`https://localhost:7112/api/Movies/${this.IMDbId}`);
+
+        axios.request(`https://localhost:7112/api/Movies/${this.IMDbId}`)
            .then(req => {
-               this.title = req.data.Title;
-               this.src = req.data.Poster;
+               this.title = req.data.title;
+               this.src = req.data.poster;
                this.loaded = true;
            });
     } 

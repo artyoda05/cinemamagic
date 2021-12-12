@@ -24,7 +24,8 @@
                 </li>
             </ul>
         </div>
-        <button type="button" class="btn btn-success" @click="activateVoice()">Ask assistant</button>
+        <button v-if="stateOfAssistant.visible" type="button" class="btn btn-secondary brrr" @click="hideAssistant()">Hide assistant</button>
+        <button type="button" class="btn btn-success brrr" @click="activateVoice()">Ask assistant</button>
         <button v-if="!logined" class="btn btn-link" type="button" @click="register = true">Register</button>
         <button v-if="!logined" class="btn btn-link" type="button" @click="login = true">Login</button>
                 
@@ -33,6 +34,11 @@
     <!-- stuff -->
         <img v-if="stateOfAssistant.success1" class="bet_time" src="./assets/success_1.gif">
         <img v-if="stateOfAssistant.standing" class="bet_time" src="./assets/standing.gif">
+        <img v-if="stateOfAssistant.success2" class="bet_time" src="./assets/success_2.gif">
+        <img v-if="stateOfAssistant.failure" class="bet_time" src="./assets/failure.gif">
+        <img v-if="stateOfAssistant.falling" class="bet_time" src="./assets/falling.gif">
+        <img v-if="stateOfAssistant.listening" class="bet_time" src="./assets/listening.gif">
+        <img v-if="stateOfAssistant.movingEars" class="bet_time" src="./assets/moving_ears.gif">
     </div>
     <router-view></router-view>
     <login-modal v-if="login" @logined="logined = true" @close="login = false" :title="'ddddd'" :time="'time'" />
@@ -170,15 +176,38 @@ export default {
           login: false,
           register: false,
           stateOfAssistant: {
-              visible: true,
+              visible: false,
               success1: false,
+              success2: false,
+              failure: false,
+              falling: false,
+              listening: false,
+              movingEars: false,
               standing: true
-          }
+          },
+          timeout: undefined
       }
     },
     methods: {
+        hideAssistant() {
+            this.stateOfAssistant.visible = false;
+        },
+        hideAll() {
+            
+            this.stateOfAssistant.visible = true,
+            this.stateOfAssistant.success1 = false,
+            this.stateOfAssistant.success2 = false,
+            this.stateOfAssistant.failure = false,
+            this.stateOfAssistant.falling = false,
+            this.stateOfAssistant.listening = false,
+            this.stateOfAssistant.movingEars = false,
+            this.stateOfAssistant.standing = false
+            
+        },
         activateVoice() {
             const r = this.$router;
+
+            this.stateOfAssistant.visible = true;
 
             var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition;
             var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList;
@@ -192,6 +221,11 @@ export default {
             recognition.lang = 'en-US';
             recognition.interimResults = false;
             recognition.maxAlternatives = 1;
+
+            const hide = this.hideAll;
+
+            hide();
+            this.stateOfAssistant.listening = true;
 
             recognition.start();
 
@@ -218,82 +252,127 @@ export default {
 
             switch (speechResult) {
                 case 'hello':
-                    speak('hello');
+                    speak('Hello. I\'m your voice assistant. Welcome to our site.');
+                    hide();
+                    stat.standing = true;
                     break;
-                case 'who are you':
-                    speak('i am you but better');
+                case 'please hide':
+                    hide();
+                    stat.visible = false;
+                    speak("you are welcome");
                     break;
-
-                
                 case 'delete order number':
-                    speak(`removing booking number ${tt}`);
-                    r.push({name: 'booking'});
-                    // eslint-disable-next-line no-console
-                    console.log(store.state.bookings);
-
+                    
                     // eslint-disable-next-line no-case-declarations
                     let z = text2num(tt);
-
-                    // eslint-disable-next-line no-console
-                    console.log(z);
-
                     // eslint-disable-next-line no-case-declarations
                     const booking = store.state.bookings.find(x => x.index === z);
 
                     store.dispatch('cancelReservation', {
                         id: booking.id
-                    }).then(() => r.push({name: 'home'}))
+                    })
+                    .then(() => {
+                        setTimeout(() => {
+                            
+                            speak(`The system is removing booking number ${tt}. Be carefull, you won't be able to visit this event.`);
+                        }, 1000);
+
+                        hide();
+                        stat.failure = true;
+                        stat.visible = true;
+
+                        setTimeout(function () {
+                            hide();
+                            stat.standing = true;
+                        }, 7500);
+                    })
+                    .then(() => r.push({name: 'home'}))
                     .then(() => r.push({name: 'booking'}));
-                    
-                    
-                    
                     break;
                 case 'open bookings':
-                    speak('open bookings');
-                    r.push({name: 'booking'});
+                    setTimeout( () => {
+                        r.push({name: 'booking'});
+                        speak('I\'m opening bookings page. Here you can see events that you want to visit.');
+
+                    }, 1000 );
+                    hide();
+                    stat.success2 = true;
+                    setTimeout(function () {
+                        hide();
+                        stat.standing = true;
+                    }, 6000);
+                    
                     break;
                 case 'open schedule':
                     setTimeout( () => {
                         r.push({name: 'schedule'});
-                        speak('opening schedule');
+                        speak('I\'m opening the schedule page. Information at this page represents available events for booking.');
 
                     }, 1000 );
 
-                    
-                    
+                    hide();
                     stat.success1 = true;
-                    stat.standing = false;
                     setTimeout(function () {
-                        stat.success1 = false;
+                        hide();
                         stat.standing = true;
                     }, 10000);
 
                     break;
                 case 'buy tickets':
-                    speak('buying tickets blyat');
-                    // window.location.href = 'movies';
-                    // eslint-disable-next-line no-console
-                    console.log(r);
+                    
+                    
                     store.dispatch('reserveSeats', {
                         sessionId: store.state.sessionId,
                         tickets: store.state.chosenSeats.map(s => { return { row: s.row, seat: s.seat };})
-                    }).then( () => r.push({name: 'booking'}));
+                    })
+                    .then(() => {
+                        setTimeout(() => {
+                            speak('Thank you for order. I\'m booking a tickets for you.');
+                        }, 1000);
 
-                    // r.push({name: 'booking'});
-                    // router.push({name: 'movies'});
+                        hide();
+                        stat.success1 = true;
+
+                        setTimeout(function () {
+                            hide();
+                            stat.standing = true;
+                        }, 10000);
+                    })
+                    .then( () => r.push({name: 'booking'}));
+
+                    
                     break;
                 
                 case 'open movies':
-                    speak('opening movies');
-                    // window.location.href = 'movies';
-                    // eslint-disable-next-line no-console
-                    console.log(r);
-                    r.push({name: 'movies'});
-                    // router.push({name: 'movies'});
+                    setTimeout( () => {
+                        r.push({name: 'movies'});
+                        speak('I\'m opening movies page. Here you can see the necessary information about different movies. Enjoy it.');
+
+                    }, 1000 );
+
+                    hide();
+                    stat.success2 = true;
+                    setTimeout(function () {
+                        hide();
+                        stat.standing = true;
+                    }, 6000);
+
                     break;
                 default:
-                    speak('Sorry, I don\'t understand you');
+                    hide();
+                    stat.movingEars = true;
+                    speak(`Sorry, I can't understand what you said. The phrase I have heard is ${speechResult}`);
             }
+
+            if (stat.timeout){
+                clearTimeout(stat.timeout);
+            }
+
+            stat.timeout = setTimeout( () => {
+                hide();
+                stat.falling = true;
+                speak('I am waiting for your request.')
+            }, 30000 );
         }
     }
     }
@@ -309,6 +388,10 @@ export default {
     margin: 5px;
     margin-left: 10px;
     color: #9a9da0;
+}
+
+.brrr {
+    margin-left: 10px;
 }
 
 .box {

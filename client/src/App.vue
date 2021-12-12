@@ -260,7 +260,10 @@ export default {
                     hide();
                     stat.visible = false;
                     speak("you are welcome");
-                    break;
+                    if (stat.timeout){
+                        clearTimeout(stat.timeout);
+                    }
+                    return;
                 case 'delete order number':
                     
                     // eslint-disable-next-line no-case-declarations
